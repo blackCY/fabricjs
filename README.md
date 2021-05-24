@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+# FabricJs
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[官网](http://fabricjs.com/)
 
-## Available Scripts
+## API
 
-In the project directory, you can run:
+### 绘制图形
 
-### `yarn start`
+#### fabric.Rect({}) 方形，fabric.Circle({}) 圆形，fabric.Triangle({}) 三角形
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- left=0：距离画布左侧的距离
+- top=0：距离画布上边的距离
+- fill='oink'：背景颜色
+- width=10：宽度
+- height=10：高度
+- freeDrawingBrush：线条粗细
+- isDrawingMode
+- ...
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+#### fabric.Path({ M x y L x1 y1 L x2 y2 z }) 多边形
 
-### `yarn test`
+- M 表示起点，从坐标为 x、y 点为起点，画到 L x1、y1 点，然后再画到 L x2、y2 点，最后 z 表示闭合该图形
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### Image() 通过元素插入图片
 
-### `yarn build`
+#### fromURL 通过 URL 插入图片
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 事件
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### mouse 鼠标事件
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- move：按下且移动
+- down：按下时
+- up：按下抬起时
+- dblclick：双击时
+- mouseout：离开元素时
+- mousewheel：滚轮事件
 
-### `yarn eject`
+#### selection
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- created：初次选中图层
+- updated：图层发生变化
+- cleared：清空图层选中
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### after-render：画布重绘后
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- selected：被选中
+- deselected：取消选中
+- moving：移动
+- rotating：旋转
+- added：添加
+- removed：移除
+- modified：调整
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+#### set & get
 
-## Learn More
+obj.set() 通常设置属性的方式有两种，第一种是在绘制的时候添加进去，另一种是通过 set 方法设置
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+> 例：obj.set({ color: '#000' })
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**注意：需 canvas.add(obj) 刷新页面**
 
-### Code Splitting
+#### 组别 fabric.Group([x, y], {})
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Group 属性可以将 x 与 y 两个 fabric 实例组合成一个组别，在页面上显示出来
 
-### Analyzing the Bundle Size
+#### 序列化 和 反序列化
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- toJSON(序列化)：导出画布信息
+- loadFromJSON(反序列化)：将导出的画布还原成画布
 
-### Making a Progressive Web App
+**注意事项：obj.renderAll() 所有图层的操作之后，都需要调用这个方法刷新**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+obj.add() 将场景加入画布中
 
-### Advanced Configuration
+### 操作案例
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+#### 图层移动
 
-### Deployment
+- obj.bringForward()：上移图层
+- obj.sendBackwards()：下移图层
+- card.moveTo(obj, index)：使用 canvas 对象的 moveTo 方法，移至图层到指定位置
+- obj.retate(angle)：旋转图层
+- obj.set({ scaleX/Y: this.selectedObj.scaleX/Y })：翻转图层，沿着 X 轴或者 Y 轴翻转
+- obj.remove()：删除图层，在进行相应操作后都需要 canvas.renderAll() 重新刷新画布，否则操作不生效
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### 查询组件
 
-### `yarn build` fails to minify
+- canvas.item(index: number)：查找第 index 个添加到 canvas 的组件
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 资料
+
+- [fabric.js 常用属性](http://www.321332211.com/thread?topicId=270)
